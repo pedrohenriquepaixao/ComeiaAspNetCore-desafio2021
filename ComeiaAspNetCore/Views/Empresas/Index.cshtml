@@ -1,0 +1,61 @@
+﻿@model IEnumerable<ComeiaAspNetCore.Models.Empresa>
+
+@{
+    ViewData["Title"] = "Empresas";
+}
+
+<h1 class="title">Empresas</h1>
+
+<p class="my-4">
+    <a class="button-bordered" asp-action="Create">Cadastrar empresa</a>
+</p>
+<table class="table table-dark table-hover">
+    <thead>
+        <tr>
+            <th>
+                 @Html.DisplayNameFor(model => model.nome_fantasia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.cnpj)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.telefone)
+            </th>
+            @*<th>
+                @html.displaynamefor(model => model.created_at)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.nome_fantasia)
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.cnpj)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.telefone)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.created_at)
+            </td>*@
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

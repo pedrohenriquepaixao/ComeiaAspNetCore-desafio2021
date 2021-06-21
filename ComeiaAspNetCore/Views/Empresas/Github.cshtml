@@ -1,0 +1,136 @@
+﻿@model ComeiaAspNetCore.Models.Empresa
+
+@{
+    ViewData["Title"] = "Buscar Repositorios dos funcionarios";
+}
+
+<h1>Buscar repositorios dos funcionarios:</h1>
+
+<h4>Github busca</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <div>
+            <form id="form-busca">
+                <div class="row">
+                    <div class="col-auto">
+                        <input type="type" class="form-control" id="busca" name="name" value="" placeholder="Buscar GitHub" />
+                    </div>
+                    <div class="col-auto ">
+                        <button class="btn btn-primary mb-3">Buscar</button>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div class="row my-4" id="cards">
+        
+    </div>
+    
+</div>
+
+<div>
+    <a asp-action="Index">Voltar para lista</a>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#cards').html("<p class='container text-center p-2' style='border:1px  dashed #5C636A;margin: 0 10px;color:#5C636A;'>Aguardando busca ...</p>")
+            $('#form-busca').submit((e) => {
+
+                e.preventDefault();
+
+                let user = $('#busca').val();
+                var param = {};
+                param.url = 'https://api.github.com/users/' + user + '/repos';
+                param.method = 'GET';
+                param.success = (data) => populate(data);
+                param.dataType = 'jsonp';
+                serviceRest(param);
+            });
+        });
+
+
+
+
+        function populate(data) {
+            if (data.data == "") {
+                console.log(data)
+                $('#cards').html("<p class='container text-center p-2' style='border:1px  dashed #5C636A;margin: 0 10px;color:#5C636A;'>Nenhum repository encontrado ...</p>")
+            }
+            cards.innerHTML = "";
+            (data.fantasia == "") ? $('#nome_fantasia').val(data.nome) : $('#nome_fantasia').val(data.fantasia)
+
+            $.each(data.data, function (key, item) {
+                let col = document.createElement('div');
+                let card = document.createElement('div');
+                let img = document.createElement('img');
+                let cardBody = document.createElement('div');
+                let cardTitle = document.createElement('h5');
+                let cardText = document.createElement('p');
+                let cardButton = document.createElement('a');
+
+                col.classList.add('col-md-4');
+                col.classList.add('d-flex');
+
+                card.style.width = "20rem";
+                card.classList.add('card');
+                card.classList.add('my-4');
+                col.appendChild(card);
+
+                img.src = item.owner.avatar_url;
+                card.appendChild(img);
+                card.appendChild(cardBody);
+
+                cardTitle.innerText = item.name;
+                cardTitle.classList.add('text-dark');
+                cardTitle.classList.add('fw-bold');
+                cardTitle.classList.add('card-title')
+                cardBody.appendChild(cardTitle);
+
+                cardText.innerText = item.description != null ? item.description : "Repositorio sem descrição";
+                cardText.classList.add('card-text');
+                cardText.classList.add('text-dark');
+
+                cardBody.classList.add('card-body')
+                cardBody.classList.add('d-flex')
+                cardBody.classList.add('flex-column')
+                cardBody.style.justifyContent = "space-between"
+                cardBody.appendChild(cardText);
+
+                cardButton.classList.add('w-100')
+                cardButton.classList.add('btn')
+                cardButton.classList.add('btn-primary')
+                cardButton.innerText = "Abrir repositorio";
+                cardButton.href = item.html_url;
+                cardButton.target = "_blank";
+                cardBody.appendChild(cardButton);
+
+                $('#cards').append(col)
+                //$(col).appendTo($('#cards'));
+
+            })
+
+
+        }
+
+        function serviceRest(param) {
+            $.ajax({
+                url: param.url,
+                dataType: param.dataType,
+                type: param.method,
+                data: param.data,
+                success: param.success
+            });
+        }
+
+
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
